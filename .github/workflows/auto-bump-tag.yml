@@ -38,6 +38,7 @@ jobs:
                 nextVersion = maxVersion + 1;
               }
               core.setOutput("nextVersion", nextVersion);
+              console.log(`nextVersion: ${nextVersion}`)
             });
 
       - name: Create Release Tag
