@@ -1,0 +1,50 @@
+name: Auto Bump and Create Release Tag
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  create-tag:
+    name: Create Tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the Repository
+        uses: actions/checkout@v4
+
+      - name: Retrieve Release Tag Version
+        id: retrieve-max-tag-version
+        uses: actions/github-script@v8
+        with:
+          script: |
+            await github.rest.git.listMatchingRefs({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `tags/`,
+            }).then((res) => {
+              const versions = res.map((ref) => {
+                const refNameIndex = ref.ref.lastIndexOf("/") + 1;
+                const refName = ref.ref.substring(refNameIndex);
+                return refName;
+              }).filter((refName) => {
+                return refName.startsWith("v") && !isNaN(refName.substring(1));
+              }).map((refName) => {
+                return Number(refName.substring(1));
+              });
+              const maxVersion = Math.max(...versions);
+              const nextVersion = maxVersion + 1;
+              core.setOutput("nextVersion", nextVersion);
+            });
+
+      - name: Create Release Tag
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const tag = "v${{steps.retrieve-max-tag-version.outputs.nextVersion }}"
+            await github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: `refs/tags/${tag}`,
+              sha: context.sha,
+            });
