@@ -23,6 +23,7 @@ jobs:
               repo: context.repo.repo,
               ref: `tags/`,
             }).then(async (res) => {
+              console.log(res);
               const refs = await res.json();
               const versions = refs.map((ref) => {
                 const refNameIndex = ref.ref.lastIndexOf("/") + 1;
