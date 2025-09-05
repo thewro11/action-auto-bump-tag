@@ -32,7 +32,7 @@ jobs:
               }).map((refName) => {
                 return Number(refName.substring(1));
               });
-              let nextVersion = 0;
+              let nextVersion = 1;
               if (res.data.length > 0) {
                 const maxVersion = Math.max(...versions);
                 nextVersion = maxVersion + 1;
