@@ -22,10 +22,8 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: `tags/`,
-            }).then(async (res) => {
-              console.log(res);
-              const refs = await res.json();
-              const versions = refs.map((ref) => {
+            }).then((res) => {
+              const versions = res.data.map((ref) => {
                 const refNameIndex = ref.ref.lastIndexOf("/") + 1;
                 const refName = ref.ref.substring(refNameIndex);
                 return refName;
@@ -34,8 +32,11 @@ jobs:
               }).map((refName) => {
                 return Number(refName.substring(1));
               });
-              const maxVersion = Math.max(...versions);
-              const nextVersion = maxVersion + 1;
+              let nextVersion = 0;
+              if (res.data.length > 0) {
+                const maxVersion = Math.max(...versions);
+                nextVersion = maxVersion + 1;
+              }
               core.setOutput("nextVersion", nextVersion);
             });
 
