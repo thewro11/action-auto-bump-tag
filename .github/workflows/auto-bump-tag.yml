@@ -22,8 +22,9 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               ref: `tags/`,
-            }).then((res) => {
-              const versions = res.map((ref) => {
+            }).then(async (res) => {
+              const refs = await res.json();
+              const versions = refs.map((ref) => {
                 const refNameIndex = ref.ref.lastIndexOf("/") + 1;
                 const refName = ref.ref.substring(refNameIndex);
                 return refName;
