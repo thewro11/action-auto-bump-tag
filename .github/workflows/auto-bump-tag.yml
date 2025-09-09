@@ -36,7 +36,7 @@ jobs:
               let nextVersion = 1;
               if (versions.length > 0) {
                 const maxVersion = Math.max(...versions);
-                nextVersion = maxVersion + 1;
+                nextVersion = Math.floor(maxVersion) + 1;
               }
               core.setOutput("nextVersion", nextVersion);
               console.log(`nextVersion: ${nextVersion}`)
